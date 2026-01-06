@@ -8,27 +8,15 @@
 // =============================================
 
 const APP_CONFIG = {
-    itemsPerPage: 15,
-    cardsPerLoad: 12,
-    toastDuration: 4000,
-    animationDuration: 300,
-    searchDebounce: 300,
-    // Multiple users array
-    users: [
-        {
-            email: "orunjubaer@gmail.com",
-            password: "Jubaer@2026",
-            name: "Orun Jubaer",
-            role: "Administrator"
-        },
-        {
-            email: "probir@icddrb.org",
-            password: "Probir@2026",
-            name: "Probir",
-            role: "Administrator"
-        }
-        // Add more users here as needed
-    ]
+itemsPerPage: 15,
+cardsPerLoad: 12,
+toastDuration: 4000,
+animationDuration: 300,
+searchDebounce: 300,
+credentials: {
+email: "orunjubaer@gmail.com",
+password: "Jubaer@2026"
+}
 };
 
 const STATE = {
@@ -3517,3 +3505,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 console.log('🎉 CholOut Hub - Complete & Enhanced!');
+
