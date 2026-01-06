@@ -8,15 +8,15 @@
 // =============================================
 
 const APP_CONFIG = {
-itemsPerPage: 15,
-cardsPerLoad: 12,
-toastDuration: 4000,
-animationDuration: 300,
-searchDebounce: 300,
-credentials: {
-email: "orunjubaer@gmail.com",
-password: "Jubaer@2026"
-}
+    itemsPerPage: 15,
+    cardsPerLoad: 12,
+    toastDuration: 4000,
+    animationDuration: 300,
+    searchDebounce: 300,
+    credentials: {
+        email: "orunjubaer@gmail.com",
+        password: "Jubaer@2026"
+    }
 };
 
 const STATE = {
@@ -3503,6 +3503,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2000);
 });
 
-
 console.log('🎉 CholOut Hub - Complete & Enhanced!');
-
