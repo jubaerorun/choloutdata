@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CholOut Hub - Modern Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- LOADER -->
+    <div id="loader" class="loader-overlay">
+        <div class="loader-content">
+            <div class="loader-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            <h2>CholOut Hub</h2>
+            <p>Initializing Dashboard...</p>
+        </div>
+    </div>
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-container">
+            <div class="login-left">
+                <div class="login-brand">
+                    <div class="brand-icon">
+                        <i class="fa-solid fa-virus-covid"></i>
+                    </div>
+                    <h1>CholOut Hub</h1>
+                    <p>Advanced Cholera Data Management System</p>
+                </div>
+                <div class="login-features">
+                    <div class="feature">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Real-time Analytics</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fa-solid fa-database"></i>
+                        <span>300+ Variables</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Secure Access</span>
+                    </div>
+                </div>
+            </div>
+            <div class="login-right">
+                <form id="login-form" class="login-form">
+                    <h2>Welcome Back</h2>
+                    <p>Sign in to access your dashboard</p>
+                    
+                    <div class="form-field">
+                        <label for="email">Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" id="email" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="password" placeholder="Enter password" required>
+                            <button type="button" class="toggle-pass" onclick="togglePassword()">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="remember">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-link">Forgot password?</a>
+                    </div>
+                    
+                    <button type="submit" class="login-btn">
+                        <span>Sign In</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    
+                    <div id="login-error" class="login-error"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="app" class="app" style="display:none;">
+        
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-virus-covid"></i>
+                </div>
+                <div class="brand-text">
+                    <h2>CholOut</h2>
+                    <span>Data Hub</span>
+                </div>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-angles-left"></i>
+                </button>
+            </div>
+
+            <!-- Navigation with Dropdowns -->
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <span class="nav-label">Main Menu</span>
+                    
+                    <a href="#" class="nav-item active" data-page="dashboard">
+                        <i class="fa-solid fa-grid-2"></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <!-- Data Explorer Dropdown -->
+                    <div class="nav-dropdown">
+                        <button class="nav-item has-dropdown" onclick="toggleDropdown(this)">
+                            <i class="fa-solid fa-database"></i>
+                            <span>Data Explorer</span>
+                            <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item" data-page="tree">
+                                <i class="fa-solid fa-sitemap"></i> Hierarchy Tree
+                            </a>
+                            <a href="#" class="dropdown-item" data-page="cards">
+                                <i class="fa-solid fa-grip"></i> Card Gallery
+                            </a>
+                            <a href="#" class="dropdown-item" data-page="grid">
+                                <i class="fa-solid fa-table-cells"></i> Data Grid
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Categories Dropdown -->
+                    <div class="nav-dropdown">
+                        <button class="nav-item has-dropdown" onclick="toggleDropdown(this)">
+                            <i class="fa-solid fa-folder-tree"></i>
+                            <span>Categories</span>
+                            <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item cat-health" onclick="filterCategory('Health')">
+                                <i class="fa-solid fa-heart-pulse"></i> Health
+                                <span class="count" id="nav-health-count">0</span>
+                            </a>
+                            <a href="#" class="dropdown-item cat-demo" onclick="filterCategory('Demographic')">
+                                <i class="fa-solid fa-users"></i> Demographic
+                                <span class="count" id="nav-demo-count">0</span>
+                            </a>
+                            <a href="#" class="dropdown-item cat-climate" onclick="filterCategory('Climatic')">
+                                <i class="fa-solid fa-cloud-sun"></i> Climatic
+                                <span class="count" id="nav-climate-count">0</span>
+                            </a>
+                            <a href="#" class="dropdown-item cat-env" onclick="filterCategory('Environmental')">
+                                <i class="fa-solid fa-leaf"></i> Environmental
+                                <span class="count" id="nav-env-count">0</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Management Dropdown -->
+                    <div class="nav-dropdown">
+                        <button class="nav-item has-dropdown" onclick="toggleDropdown(this)">
+                            <i class="fa-solid fa-sliders"></i>
+                            <span>Management</span>
+                            <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item" onclick="openAddModal()">
+                                <i class="fa-solid fa-plus"></i> Add Variable
+                            </a>
+                            <a href="#" class="dropdown-item" onclick="openBulkModal()">
+                                <i class="fa-solid fa-upload"></i> Bulk Import
+                            </a>
+                            <a href="#" class="dropdown-item" onclick="openExportModal()">
+                                <i class="fa-solid fa-download"></i> Export Data
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-label">Quick Access</span>
+                    
+                    <a href="#" class="nav-item" data-page="analytics">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Analytics</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="reports">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <span>Reports</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="settings">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <h4 id="sidebar-user-name">Admin User</h4>
+                        <span>Administrator</span>
+                    </div>
+                    <button class="user-menu-btn" onclick="toggleUserMenu()">
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </button>
+                </div>
+                <div id="user-dropdown" class="user-dropdown">
+                    <a href="#"><i class="fa-solid fa-user-pen"></i> Edit Profile</a>
+                    <a href="#"><i class="fa-solid fa-bell"></i> Notifications</a>
+                    <a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+            
+            <!-- TOP HEADER -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="page-info">
+                        <h1 id="page-title">Dashboard</h1>
+                        <div class="breadcrumb">
+                            <span>Home</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                            <span id="breadcrumb-current">Overview</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="header-center">
+                    <div class="search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="global-search" placeholder="Search variables, categories...">
+                        <div class="search-shortcut">⌘K</div>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <button class="header-btn" onclick="toggleTheme()" title="Toggle Theme">
+                        <i class="fa-solid fa-moon" id="theme-icon"></i>
+                    </button>
+                    <button class="header-btn" onclick="toggleNotifications()" title="Notifications">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <button class="header-btn add-new-btn" onclick="openAddModal()">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Add New</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- CONTENT WRAPPER -->
+            <div class="content-wrapper">
+                
+                <!-- DASHBOARD PAGE -->
+                <section id="page-dashboard" class="page active">
+                    
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card health" onclick="filterCategory('Health')">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-heart-pulse"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Health Variables</span>
+                                <h3 id="stat-health">0</h3>
+                            </div>
+                            <div class="stat-trend up">
+                                <i class="fa-solid fa-arrow-up"></i> 12%
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card demo" onclick="filterCategory('Demographic')">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Demographic</span>
+                                <h3 id="stat-demo">0</h3>
+                            </div>
+                            <div class="stat-trend up">
+                                <i class="fa-solid fa-arrow-up"></i> 8%
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card climate" onclick="filterCategory('Climatic')">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-cloud-sun"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Climatic</span>
+                                <h3 id="stat-climate">0</h3>
+                            </div>
+                            <div class="stat-trend down">
+                                <i class="fa-solid fa-arrow-down"></i> 3%
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card env" onclick="filterCategory('Environmental')">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Environmental</span>
+                                <h3 id="stat-env">0</h3>
+                            </div>
+                            <div class="stat-trend up">
+                                <i class="fa-solid fa-arrow-up"></i> 15%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-chart-pie"></i> Category Distribution</h3>
+                                <div class="card-actions">
+                                    <button onclick="changeChartType('pie')"><i class="fa-solid fa-chart-pie"></i></button>
+                                    <button onclick="changeChartType('doughnut')"><i class="fa-solid fa-circle-notch"></i></button>
+                                    <button onclick="changeChartType('bar')"><i class="fa-solid fa-chart-bar"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-chart-bar"></i> Sub-Categories</h3>
+                                <button class="card-menu"><i class="fa-solid fa-ellipsis"></i></button>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="subCatChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent & Quick Actions -->
+                    <div class="bottom-grid">
+                        <div class="recent-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-clock-rotate-left"></i> Recent Variables</h3>
+                                <a href="#" onclick="switchPage('grid')">View All</a>
+                            </div>
+                            <div class="card-body">
+                                <div id="recent-list" class="recent-list"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-actions-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="quick-actions">
+                                    <button class="quick-btn" onclick="openAddModal()">
+                                        <i class="fa-solid fa-plus"></i>
+                                        <span>Add Variable</span>
+                                    </button>
+                                    <button class="quick-btn" onclick="openExportModal()">
+                                        <i class="fa-solid fa-download"></i>
+                                        <span>Export Data</span>
+                                    </button>
+                                    <button class="quick-btn" onclick="openBulkModal()">
+                                        <i class="fa-solid fa-upload"></i>
+                                        <span>Bulk Import</span>
+                                    </button>
+                                    <button class="quick-btn" onclick="switchPage('tree')">
+                                        <i class="fa-solid fa-sitemap"></i>
+                                        <span>View Tree</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TREE VIEW PAGE -->
+                <section id="page-tree" class="page">
+                    <div class="page-toolbar">
+                        <div class="toolbar-left">
+                            <h2><i class="fa-solid fa-sitemap"></i> Hierarchy Tree View</h2>
+                        </div>
+                        <div class="toolbar-right">
+                            <button class="toolbar-btn" onclick="expandAllNodes()">
+                                <i class="fa-solid fa-expand"></i> Expand All
+                            </button>
+                            <button class="toolbar-btn" onclick="collapseAllNodes()">
+                                <i class="fa-solid fa-compress"></i> Collapse All
+                            </button>
+                            <button class="toolbar-btn" onclick="toggleTreeLayout()">
+                                <i class="fa-solid fa-arrows-rotate"></i> Toggle Layout
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tree-container" id="tree-container"></div>
+                </section>
+
+                <!-- CARDS GALLERY PAGE -->
+                <section id="page-cards" class="page">
+                    <div class="page-toolbar">
+                        <div class="toolbar-left">
+                            <h2><i class="fa-solid fa-grip"></i> Variable Gallery</h2>
+                            <span class="result-count" id="cards-count">0 variables</span>
+                        </div>
+                        <div class="toolbar-right">
+                            <select id="cards-sort" onchange="sortCards()">
+                                <option value="id">Sort by ID</option>
+                                <option value="name">Sort by Name</option>
+                                <option value="cat">Sort by Category</option>
+                            </select>
+                            <div class="view-switcher">
+                                <button class="active" onclick="setCardView('grid')"><i class="fa-solid fa-grip"></i></button>
+                                <button onclick="setCardView('list')"><i class="fa-solid fa-list"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cards-container" id="cards-container"></div>
+                    <div class="load-more-wrapper">
+                        <button id="load-more-btn" onclick="loadMoreCards()">
+                            <i class="fa-solid fa-chevron-down"></i> Load More
+                        </button>
+                    </div>
+                </section>
+
+                <!-- DATA GRID PAGE -->
+                <section id="page-grid" class="page">
+                    <div class="page-toolbar">
+                        <div class="toolbar-left">
+                            <h2><i class="fa-solid fa-table-cells"></i> Data Grid</h2>
+                            <span class="result-count" id="grid-count">0 records</span>
+                        </div>
+                        <div class="toolbar-right">
+                            <button class="toolbar-btn primary" onclick="openAddModal()">
+                                <i class="fa-solid fa-plus"></i> Add New
+                            </button>
+                            <button class="toolbar-btn" onclick="selectAllRows()">
+                                <i class="fa-solid fa-check-double"></i> Select All
+                            </button>
+                            <button class="toolbar-btn danger" onclick="deleteSelected()">
+                                <i class="fa-solid fa-trash"></i> Delete Selected
+                            </button>
+                            <button class="toolbar-btn success" onclick="openExportModal()">
+                                <i class="fa-solid fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Filters Bar -->
+                    <div class="filters-bar">
+                        <select id="filter-cat" onchange="applyFilters()">
+                            <option value="">All Categories</option>
+                            <option value="Health">Health</option>
+                            <option value="Demographic">Demographic</option>
+                            <option value="Climatic">Climatic</option>
+                            <option value="Environmental">Environmental</option>
+                        </select>
+                        <select id="filter-sub" onchange="applyFilters()">
+                            <option value="">All Sub-Categories</option>
+                        </select>
+                        <select id="filter-source" onchange="applyFilters()">
+                            <option value="">All Sources</option>
+                        </select>
+                        <button class="clear-filters" onclick="clearAllFilters()">
+                            <i class="fa-solid fa-xmark"></i> Clear
+                        </button>
+                    </div>
+                    
+                    <div class="table-wrapper">
+                        <table class="data-table" id="data-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="select-all" onchange="toggleSelectAll()"></th>
+                                    <th onclick="sortTable('id')">ID <i class="fa-solid fa-sort"></i></th>
+                                    <th onclick="sortTable('cat')">Category <i class="fa-solid fa-sort"></i></th>
+                                    <th onclick="sortTable('sub')">Sub-Category <i class="fa-solid fa-sort"></i></th>
+                                    <th onclick="sortTable('name')">Variable Name <i class="fa-solid fa-sort"></i></th>
+                                    <th>Description</th>
+                                    <th onclick="sortTable('source')">Source <i class="fa-solid fa-sort"></i></th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="pagination"></div>
+                </section>
+
+                <!-- ANALYTICS PAGE -->
+                <section id="page-analytics" class="page">
+                    <div class="analytics-grid">
+                        <div class="chart-card full-width">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-chart-line"></i> Source Distribution</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="sourceChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-chart-bar"></i> Resolution Types</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="resChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-chart-area"></i> Data Coverage</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="coverageChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- DETAIL PANEL (Slide-in) -->
+    <div id="detail-panel" class="detail-panel">
+        <div class="panel-overlay" onclick="closeDetailPanel()"></div>
+        <div class="panel-content">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <span class="panel-badge" id="panel-cat">Health</span>
+                    <h2 id="panel-name">Variable Name</h2>
+                </div>
+                <button class="panel-close" onclick="closeDetailPanel()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="panel-tabs">
+                <button class="panel-tab active" onclick="switchPanelTab('info')">
+                    <i class="fa-solid fa-circle-info"></i> Info
+                </button>
+                <button class="panel-tab" onclick="switchPanelTab('codes')">
+                    <i class="fa-solid fa-code"></i> Codes
+                </button>
+                <button class="panel-tab" onclick="switchPanelTab('related')">
+                    <i class="fa-solid fa-link"></i> Related
+                </button>
+            </div>
+            
+            <div class="panel-body">
+                <div id="panel-tab-info" class="panel-tab-content active">
+                    <div class="detail-row">
+                        <label>ID</label>
+                        <p id="panel-id">--</p>
+                    </div>
+                    <div class="detail-row">
+                        <label>Sub-Category</label>
+                        <p id="panel-sub">--</p>
+                    </div>
+                    <div class="detail-row">
+                        <label>Description</label>
+                        <p id="panel-desc">--</p>
+                    </div>
+                    <div class="detail-row">
+                        <label>Source</label>
+                        <p id="panel-source">--</p>
+                    </div>
+                    <div class="detail-row">
+                        <label>Resolution</label>
+                        <p id="panel-res">--</p>
+                    </div>
+                </div>
+                
+                <div id="panel-tab-codes" class="panel-tab-content">
+                    <div id="panel-codes-list" class="codes-list"></div>
+                </div>
+                
+                <div id="panel-tab-related" class="panel-tab-content">
+                    <div id="panel-related-list" class="related-list"></div>
+                </div>
+            </div>
+            
+            <div class="panel-footer">
+                <button class="panel-btn edit" onclick="editCurrentItem()">
+                    <i class="fa-solid fa-pen"></i> Edit
+                </button>
+                <button class="panel-btn duplicate" onclick="duplicateCurrentItem()">
+                    <i class="fa-solid fa-copy"></i> Duplicate
+                </button>
+                <button class="panel-btn delete" onclick="deleteCurrentItem()">
+                    <i class="fa-solid fa-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD/EDIT MODAL -->
+    <div id="crud-modal" class="modal">
+        <div class="modal-backdrop" onclick="closeModal()"></div>
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 id="modal-title"><i class="fa-solid fa-plus"></i> Add New Variable</h3>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="crud-form" onsubmit="saveVariable(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="form-id">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="form-cat">Category *</label>
+                            <select id="form-cat" required onchange="updateSubCategories()">
+                                <option value="">Select Category</option>
+                                <option value="Health">Health</option>
+                                <option value="Demographic">Demographic</option>
+                                <option value="Climatic">Climatic</option>
+                                <option value="Environmental">Environmental</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="form-sub">Sub-Category *</label>
+                            <input type="text" id="form-sub" list="sub-list" required placeholder="Type or select">
+                            <datalist id="sub-list"></datalist>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="form-name">Variable Name *</label>
+                        <input type="text" id="form-name" required placeholder="Enter variable name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="form-desc">Description *</label>
+                        <textarea id="form-desc" required placeholder="Enter description" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="form-source">Source</label>
+                            <input type="text" id="form-source" placeholder="Data source">
+                        </div>
+                        <div class="form-group">
+                            <label for="form-res">Resolution/Type</label>
+                            <input type="text" id="form-res" placeholder="e.g., Daily, Monthly">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="form-codes">Codes (JSON format)</label>
+                        <textarea id="form-codes" placeholder='{"1": "Yes", "0": "No"}' rows="3"></textarea>
+                        <small>Enter as JSON object or leave empty</small>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-save">
+                        <i class="fa-solid fa-check"></i> Save Variable
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EXPORT MODAL -->
+    <div id="export-modal" class="modal">
+        <div class="modal-backdrop" onclick="closeExportModal()"></div>
+        <div class="modal-dialog small">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-download"></i> Export Data</h3>
+                <button class="modal-close" onclick="closeExportModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="export-info">Export <strong id="export-count">0</strong> records</p>
+                <div class="export-options">
+                    <button class="export-btn" onclick="exportData('json')">
+                        <i class="fa-solid fa-file-code"></i>
+                        <span>JSON</span>
+                    </button>
+                    <button class="export-btn" onclick="exportData('csv')">
+                        <i class="fa-solid fa-file-csv"></i>
+                        <span>CSV</span>
+                    </button>
+                    <button class="export-btn" onclick="exportData('excel')">
+                        <i class="fa-solid fa-file-excel"></i>
+                        <span>Excel</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATIONS PANEL -->
+    <div id="notifications-panel" class="notifications-panel">
+        <div class="notif-header">
+            <h3>Notifications</h3>
+            <button onclick="clearNotifications()">Clear All</button>
+        </div>
+        <div class="notif-list" id="notif-list">
+            <div class="notif-item unread">
+                <i class="fa-solid fa-circle-check"></i>
+                <div class="notif-content">
+                    <p>Data sync completed</p>
+                    <span>2 minutes ago</span>
+                </div>
+            </div>
+            <div class="notif-item unread">
+                <i class="fa-solid fa-database"></i>
+                <div class="notif-content">
+                    <p>3 new variables added</p>
+                    <span>1 hour ago</span>
+                </div>
+            </div>
+            <div class="notif-item">
+                <i class="fa-solid fa-shield-check"></i>
+                <div class="notif-content">
+                    <p>System backup complete</p>
+                    <span>Yesterday</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
+    <!-- SCRIPTS -->
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
